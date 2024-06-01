@@ -21,7 +21,7 @@ In the long term, the architecture may includes these parts as well:
 Monorepo per frontend platform with standalone `api`, `docs`, `backend` and
 `testing` reposotories.
 
-::: mermaid
+```mermaid
 
 graph TD;
 web-->api;
@@ -34,7 +34,7 @@ testing-->backend
 testing-->android
 testing-->ios
 
-:::
+```
 
 ## Rationale
 
