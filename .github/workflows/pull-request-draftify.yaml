@@ -1,0 +1,24 @@
+---
+name: pull-request-draftify
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  draftify:
+    runs-on: ubuntu-22.04
+    if: github.event.pull_request.draft == false
+    steps:
+      - uses: tibdex/github-app-token@v2
+        id: generate_token
+        with:
+          app_id: ${{ secrets.APP_CI_ID }}
+          private_key: ${{ secrets.APP_CI_KEY }}
+          revoke: true
+      - uses: voiceflow/draft-pr@v1.1
+        with:
+          token: ${{ steps.generate_token.outputs.token }}

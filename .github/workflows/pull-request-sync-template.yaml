@@ -1,0 +1,33 @@
+---
+name: pull-request-sync-template
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync-template:
+    runs-on: ubuntu-22.04
+    if: ${{ github.repository }} != 'eShopOnMicroservices/repository-template'
+    steps:
+      - uses: tibdex/github-app-token@v2
+        id: generate_token
+        with:
+          app_id: ${{ secrets.APP_CI_ID }}
+          private_key: ${{ secrets.APP_CI_KEY }}
+          revoke: true
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+      - name: actions-template-sync
+        uses: AndreasAugustin/actions-template-sync@v2
+        with:
+          source_repo_path: eShopOnMicroservices/repository-template
+          pr_labels: meta_dependencies,sync_template
+          github_token: ${{ steps.generate_token.outputs.token }}
+          git_user_email: ${{ vars.APP_CI_EMAIL }}
+          git_user_name: ${{ vars.APP_CI_NAME }}
+          gpg_private_key: ${{ secrets.APP_CI_GPG_KEY }}
+          gpg_passphrase: ${{ secrets.APP_CI_GPG_PASSPHRASE }}

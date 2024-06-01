@@ -1,0 +1,55 @@
+---
+name: pull-request-lint
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+    types: [ready_for_review]
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  typos:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crate-ci/typos@v1.21.0
+        with:
+          config: ./.config/typos.toml
+
+  yamllint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: reviewdog/action-yamllint@v1.14.0
+        with:
+          fail_on_error: true
+          reporter: github-pr-review
+
+  dotenv-linter:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dotenv-linter/action-dotenv-linter@v2.21.0
+        with:
+          fail_on_error: true
+          reporter: github-pr-review
+
+  markdownlint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: "**/*.(md|MD)"
+          # doesn't work if the name of the config doesn't start with dot
+          config: "./.config/.markdownlint.yaml"
+
+  conventional-commits:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: webiny/action-conventional-commits@v1.3.0
+        with:
+          allowed-commit-types: >
+            build,chore,ci,deploy,docs,feat,fix,perf,refactor,revert,style,test
