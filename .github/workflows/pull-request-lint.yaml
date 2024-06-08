@@ -17,7 +17,7 @@ jobs:
         with:
           config: ./.config/typos.toml
 
-  yamllint:
+  yaml:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
           fail_on_error: true
           reporter: github-pr-review
 
-  dotenv-linter:
+  dotenv:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
           fail_on_error: true
           reporter: github-pr-review
 
-  markdownlint:
+  markdown:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -45,11 +45,25 @@ jobs:
           # doesn't work if the name of the config doesn't start with dot
           config: "./.config/.markdownlint.yaml"
 
-  conventional-commits:
+  commits-history:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: webiny/action-conventional-commits@v1.3.0
         with:
           allowed-commit-types: >
-            build,chore,ci,deploy,docs,feat,fix,perf,refactor,revert,style,test
+            build,chore,ci,deploy,docs,feat,fix,bugfix,perf,refactor,revert,style,test
+
+  check-required:
+    if: always()
+    runs-on: ubuntu-22.04
+    needs:
+      - typos
+      - yaml
+      - markdown
+      - commits-history
+      - dotenv
+    steps:
+      - uses: re-actors/alls-green@v1.2.2
+        with:
+          jobs: ${{ toJSON(needs) }}

@@ -3,6 +3,9 @@ version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: /
+    labels:
+      - dependencies
+      - workflows
     schedule:
       interval: daily
       time: "04:00"

@@ -1,14 +1,14 @@
 ---
-name: pull-request-sync-template
+name: schedule-sync-template
 
 # yamllint disable-line rule:truthy
 on:
   schedule:
-    - cron: "0 4 * * *"
+    - cron: 0 */2 * * *
   workflow_dispatch:
 
 jobs:
-  sync-template:
+  run:
     runs-on: ubuntu-22.04
     if: ${{ github.repository }} != 'eShopOnMicroservices/repository-template'
     steps:
@@ -25,7 +25,7 @@ jobs:
         uses: AndreasAugustin/actions-template-sync@v2
         with:
           source_repo_path: eShopOnMicroservices/repository-template
-          pr_labels: meta_dependencies,sync_template
+          pr_labels: dependencies,template
           github_token: ${{ steps.generate_token.outputs.token }}
           git_user_email: ${{ vars.APP_CI_EMAIL }}
           git_user_name: ${{ vars.APP_CI_NAME }}
