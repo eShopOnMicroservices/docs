@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: dotenv-linter/action-dotenv-linter@v2.21.0
+      - uses: dotenv-linter/action-dotenv-linter@v2.22.0
         with:
           fail_on_error: true
           reporter: github-pr-review
